@@ -1,0 +1,3 @@
+[submodule "drupal-7.23/sites/all/modules/custom/taxonomy_sort"]
+	path = drupal-7.23/sites/all/modules/custom/taxonomy_sort
+	url = lucas.constantino@git.drupal.org:sandbox/lucas.constantino/2122561.git
