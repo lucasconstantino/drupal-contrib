@@ -1,4 +1,4 @@
-Drupal Contributions from Lucas Constantino Silva
+Drupal Contributions from Lucas
 ==============
 
 Container repository for some contributions to modules or Drupal's core.
