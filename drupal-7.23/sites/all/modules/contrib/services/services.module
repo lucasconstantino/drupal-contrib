@@ -760,7 +760,6 @@ function services_resource_build_index_list($results, $type, $field) {
   foreach ($results as $result) {
     if ($uri = services_resource_uri(array($type, $result->{$field}))) {
       $result->uri = $uri;
-      $result->id = $result->{$field};
       if ($type == 'user') {
         services_remove_user_data($result);
       }
