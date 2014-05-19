@@ -1,0 +1,133 @@
+<?php
+
+/**
+ * 
+ */
+function custom_services_init() {
+  
+  $current_path = current_path();
+
+  // Wrap calls to api endpoint to add method OPTION.
+  // Read: (https://drupal.org/node/1865402)
+  if (strpos($current_path, 'api') === 0) {
+
+    global $user;
+    $method = $_SERVER['REQUEST_METHOD'];
+
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+      drupal_add_http_header('Access-Control-Allow-Origin', $_SERVER['HTTP_ORIGIN']);
+    }
+
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+      drupal_add_http_header('Access-Control-Allow-Headers', $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
+    }
+    
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
+      drupal_add_http_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    }
+
+    if ($method == 'OPTIONS') {
+      exit;
+    }
+
+    // Accept custom request header;
+    drupal_add_http_header('Access-Control-Allow-Headers', 'Authentication');
+
+    if (isset($_SERVER['HTTP_AUTHENTICATION']) && !empty($_SERVER['HTTP_AUTHENTICATION'])) {
+
+      // Grab the session variables.
+      list($session_name, $sessid) = explode('=', $_SERVER['HTTP_AUTHENTICATION']);
+
+      // Log user in.
+      $db_user = db_query("SELECT u.uid, s.* FROM {users} u INNER JOIN {sessions} s ON u.uid = s.uid WHERE s.sid = :sid", array(':sid' => $sessid))->fetchObject(); 
+      $user = user_load($db_user->uid);
+
+      // If user was acctually found from the session id.
+      if ($user !== FALSE && $user->uid != 0) {
+
+        // Define session data.
+        session_id($sessid);
+        session_name($session_name);
+
+        // Save to common Cookie http header.
+        $_SERVER['HTTP_COOKIE']  = empty($_SERVER['HTTP_COOKIE']) ? '' : $_SERVER['HTTP_COOKIE'] . '; ';
+        $_SERVER['HTTP_COOKIE'] .= $_SERVER['HTTP_AUTHENTICATION'];
+
+        // Save to Cookie.
+        $_COOKIE = array($session_name => $sessid);
+      }
+    }
+  }
+}
+
+function custom_services_entity_load($entities, $type) {
+
+  // If entity is beeing load at a REST API call...
+  if (strpos(current_path(), 'api') === 0) {
+    
+    // Load information about the entity.
+    $entity_info = entity_get_info($type);
+    $entity_info = empty($entity_info['entity keys']) ? array() : $entity_info['entity keys'];
+    $entity_info['type'] = $type;
+
+    foreach($entities as $entity) {
+      $entity->entity_info = $entity_info;
+
+      // Make it easier for REST consumers to find the entity's id.
+      if (!isset($entity->id)) {
+        $entity->id = array_shift(entity_extract_ids($type, $entity));
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_services_request_postprocess_alter($controller, $args, &$result).
+ *
+ * This hook is only needed because some services resources don't use entity_load to
+ * get the results. Instead, they return simple objects as fetched from the DB.
+ */
+function custom_services_services_request_postprocess_alter($controller, $args, &$result) {
+  
+  // Load all entity types available.
+  $entity_types = entity_get_info();
+
+  // Get all entity's keys.
+  $all_entity_keys = array();
+  foreach ($entity_types as $entity_type) {
+    $entity_keys = $entity_type['entity keys'];
+    $entity_keys['type'] = $entity_type['token type'];
+
+    foreach ($entity_type['bundles'] as $name => $bundle) {
+      $entity_keys['bundles'][] = $name;
+    }
+
+    $all_entity_keys[] = $entity_keys;
+  }
+
+  // Simplify data to be processed.
+  if (is_array($result)) {
+    $results = &$result;
+  } else {
+    $results = array(&$result);
+  }
+
+  foreach ($results as &$item) {
+    // Only process object, as entities are always objects.
+    if (is_object($item)) {
+      foreach ($all_entity_keys as $entity_keys) {
+
+        if (isset($item->{$entity_keys['bundle']}) && in_array(isset($item->{$entity_keys['bundle']}), $entity_keys['bundles'])) {
+          
+          // Make entity info avilable to the entity object.
+          $item->entity_info = $entity_keys;
+
+          if (!isset($entity->id)) {
+            // Make it easier for REST consumers to find the entity's id.
+            $item->id = $item->{$entity_keys['id']};
+          }
+        }
+      }
+    }
+  }
+}

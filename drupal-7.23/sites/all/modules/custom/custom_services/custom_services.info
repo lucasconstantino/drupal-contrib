@@ -1,0 +1,3 @@
+name = "Custom Services"
+description = "Module providing OPTION answer for REST calls over CORS."
+core = 7.x

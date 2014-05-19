@@ -1,0 +1,20 @@
+name = "Entity Embed"
+description = "Module providing an embed entity widget"
+package = "Other"
+core = 7.x
+dependencies[] = views
+dependencies[] = token_filter
+
+files[] = ckeditor/ckeditor_entity_embed.view.inc
+files[] = ckeditor/ck_entityembed.js
+files[] = ckeditor/ck_entityembed.css
+
+files[] = plugins/entity_embed.inc
+files[] = plugins/images/icon.gif
+files[] = plugins/js/entity_embed.js
+files[] = plugins/entity_embed/entity_embed.css
+
+files[] = theme/html--ckeditor-entity-embed.tpl.php
+files[] = theme/page--ckeditor-entity-embed.tpl.php
+
+files[] = views/views_handler_entity_embed_add_area.inc
