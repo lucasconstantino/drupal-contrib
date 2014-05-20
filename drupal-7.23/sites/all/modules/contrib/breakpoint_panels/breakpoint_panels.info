@@ -1,0 +1,19 @@
+name = Breakpoint Panels
+description = Display different panes for breakpoints
+core = 7.x
+dependencies[] = ctools
+dependencies[] = panels
+dependencies[] = libraries
+dependencies[] = page_manager
+dependencies[] = breakpoints
+files[] = breakpoint_panels.module
+configure = admin/config/user-interface/breakpoint_panels
+package = "User Interface"
+version = "7.x-1.0"
+
+; Information added by Drupal.org packaging script on 2014-04-04
+version = "7.x-2.2"
+core = "7.x"
+project = "breakpoint_panels"
+datestamp = "1396628652"
+
