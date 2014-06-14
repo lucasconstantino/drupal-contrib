@@ -4,3 +4,6 @@
 [submodule "drupal-7.23/sites/all/modules/contrib/breakpoints_js"]
 	path = drupal-7.23/sites/all/modules/contrib/breakpoints_js
 	url = lucas.constantino@git.drupal.org:sandbox/lucas.constantino/2270645.git
+[submodule "drupal-7.23/sites/all/modules/contrib/adaptative_panes"]
+	path = drupal-7.23/sites/all/modules/contrib/adaptative_panes
+	url = lucas.constantino@git.drupal.org:sandbox/lucas.constantino/2283837.git
