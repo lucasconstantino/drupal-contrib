@@ -1,6 +1,8 @@
 My Drupal Contributions
 =======================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/lucasconstantino/drupal-contrib.svg)](https://greenkeeper.io/)
+
 Container repository I use to contribute Drupal modules and patches. The contributions that consist on new modules are added as Git submodules that point to the project's repository on Drupal. To understand how Git submodules work, please refer to the [documentation page](http://git-scm.com/book/en/Git-Tools-Submodules).
 
 ## [Taxonomy Sort](https://drupal.org/sandbox/lucas.constantino/2122561)
