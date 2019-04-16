@@ -1,0 +1,9 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "drupal-7.23/sites/all/libraries/enquire/package.json"
+      ]
+    }
+  }
+}
